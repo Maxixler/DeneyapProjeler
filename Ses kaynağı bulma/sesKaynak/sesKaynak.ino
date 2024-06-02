@@ -1,41 +1,25 @@
-int ledPin1=11;
-int sensorPin1=10;
-int sensorPin2=12;
-int ledPin2=13;
-boolean val1 =0;
-boolean val2 =0;
-void setup(){
-  pinMode(ledPin1, OUTPUT);
-  pinMode(sensorPin1, INPUT);
-  pinMode(ledPin2, OUTPUT);
-  pinMode(sensorPin2, INPUT);
-  Serial.begin (9600);
-}
-  
-void loop (){
+/*
+ *   DerinlikOlcme örneği,  
+ *   Bu örnekte temel konfigürasyon ayarları yapılmaktadır. 
+ *   Sensörden gelen mesafe verilerini okumaktadır. Mesafe verilerini seri port ekranına yazdırmaktadır. 
+ *   
+ *   Bu algılayıcı I2C haberleşme protokolü ile çalışmaktadır.
+ *   
+ *   Bu örnek Deneyap Derinlik Ölçer için oluşturulmuştur
+ *      ------> https://docs.deneyapkart.org/tr/content/contentDetail/deneyap-module-deneyap-tof-m03 <------
+ *      ------> https://github.com/deneyapkart/deneyap-derinlik-olcer-arduino-library <------  
+*/
+#include <Deneyap_DerinlikOlcer.h>                  // Deneyap Derinlik Ölçer kütüphanesi eklenmesi
 
-  val1 = digitalRead(sensorPin1);
-  val2 = digitalRead(sensorPin2);
-  Serial.println (val1);
-  Serial.println (val2);
-  delay(50);
-  // when the sensor detects a signal above the threshold value, LED flashes
-  if (val1==HIGH && val2 == LOW) {
-    digitalWrite(ledPin1, HIGH);
-    delay(50);
-  }
-  else if(val1==LOW && val2 == HIGH){
-    digitalWrite(ledPin2, HIGH);
-    delay(50);
-  }
-  else if(val1==HIGH && val2 == HIGH){
-    digitalWrite(ledPin1, HIGH);
-    digitalWrite(ledPin2, HIGH);
-    delay(50);
-  }
-  else{
-    digitalWrite(ledPin1, LOW);
-    digitalWrite(ledPin2, LOW);
-    delay(50);
-  }
+TofRangeFinder TofRangeFinder;                      // TofRangeFinder için class tanımlanması
+
+void setup() {
+    Serial.begin(115200);                           // Seri haberleşme başlatılması
+    TofRangeFinder.begin(0x29);                     // begin(slaveAdress) fonksiyonu ile cihazların haberleşmesi başlatılması
+}
+
+void loop() {
+    Serial.print("Derinlik: ");
+    Serial.println(TofRangeFinder.ReadDistance());  // Derinliğin okunması ve seri port ekranına yazdırılması
+    delay(50);                                      // 50 milisaniye bekleme süresi
 }
